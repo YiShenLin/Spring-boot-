@@ -6,3 +6,46 @@ https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.3.
 ```
 
 ### Steps
+* change build.gradle, change jar filename
+```groovy
+bootJar {
+  archiveFileName = 'springBootJPA.jar'
+}
+```
+
+#### build spring boot bootable jar 
+``` shell script 
+gradlew bootjar 
+```
+
+
+* gen docker `Dockerfile`
+``` shell script 
+docker build --build-arg JAR_FILE=build/libs/*.jar -t chtti/boot1 . 
+```
+
+* gen docker `Dockerfile`
+* use docker create image  
+``` shell script 
+docker build --build-arg JAR_FILE=build/libs/*.jar  -t chtti/boot1 .
+docker run -p 8080:8080 chtti/boot1
+```
+
+* enable other service like sql-server 
+``` shell script
+docker pull mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=UsEr1@302" -p 1433:1433 --name sqlserver2019 -d mcr.microsoft.com/mssql/server:2019-CU3-ubuntu-18.04
+```
+* use cmd to login  sql-server 
+``` shell script
+docker exec -it sqlserver2019 "bash"
+/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'UsEr1@302'
+
+CREATE DATABASE SpringBootDemo
+GO
+
+SELECT Name FROM sys.Databases
+GO
+
+quit
+```
